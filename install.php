@@ -4,6 +4,8 @@
  * DELETE THIS FILE after installation for security.
  */
 
+require_once __DIR__ . '/inc/config.php';
+require_once __DIR__ . '/inc/db.php';
 require_once __DIR__ . '/inc/functions.php';
 
 $step = $_GET['step'] ?? '1';
@@ -87,8 +89,6 @@ define('DOWNLOAD_CHUNK_SIZE', 1048576);
             $error = '密码长度至少 6 个字符。';
         } else {
             try {
-                require_once __DIR__ . '/inc/config.php';
-                require_once __DIR__ . '/inc/db.php';
                 $db = getDB();
                 $hash = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $db->prepare('INSERT INTO users (username, password, email, role) VALUES (?, ?, ?, ?)');
