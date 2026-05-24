@@ -43,13 +43,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Import SQL
             $sql = file_get_contents(__DIR__ . '/install.sql');
             // Remove CREATE DATABASE / USE lines since we handle them
-            $sql = preg_replace('/^CREATE DATABASE.*?;/mi', '', $sql);
-            $sql = preg_replace('/^USE.*?;/mi', '', $sql);
-            // Split by semicolons, handling edge cases
-            $statements = array_filter(array_map('trim', explode(";\n", $sql)));
+            $sql = preg_replace('/^CREATE DATABASE.*?;\s*[\r\n]+/mi', '', $sql);
+            $sql = preg_replace('/^USE.*?;\s*[\r\n]+/mi', '', $sql);
+            // Split by semicolon followed by newlines
+            $statements = preg_split('/;\s*[\r\n]+\s*/', $sql);
             foreach ($statements as $stmt) {
-                if (!empty($stmt) && !str_starts_with($stmt, '--')) {
-                    $pdo->exec($stmt);
+                // Strip comment lines from each statement
+                $lines = explode("\n", $stmt);
+                $lines = array_filter($lines, function($line) {
+                    $trimmed = trim($line);
+                    return $trimmed !== '' && !str_starts_with($trimmed, '--');
+                });
+                $clean = trim(implode("\n", $lines));
+                if ($clean !== '') {
+                    $pdo->exec($clean);
                 }
             }
 
