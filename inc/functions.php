@@ -570,7 +570,7 @@ function getAllowedMimeTypes(): array {
     ];
 }
 
-function validateUploadedFile(array $file): string|true {
+function validateUploadedFile(array $file): string|bool {
     if ($file['error'] !== UPLOAD_ERR_OK) {
         $errors = [
             UPLOAD_ERR_INI_SIZE   => '文件超过服务器允许的最大大小。',
