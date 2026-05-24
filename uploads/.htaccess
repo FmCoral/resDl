@@ -1,0 +1,4 @@
+<FilesMatch "\.(php|phtml)$">
+    Deny from all
+</FilesMatch>
+Options -Indexes

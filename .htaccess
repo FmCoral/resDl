@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Deny direct access to uploads (must go through download.php)
+RewriteRule ^uploads/.*$ - [F,L]
+
+# Protect inc/ directory
+RewriteRule ^inc/.*$ - [F,L]
+
+# Optional: URL rewriting for clean URLs
+# RewriteRule ^detail/([0-9]+)$ detail.php?id=$1 [L,QSA]
+# RewriteRule ^download/([0-9]+)$ download.php?id=$1 [L,QSA]
