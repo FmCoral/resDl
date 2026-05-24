@@ -458,7 +458,16 @@ function serveFileDownload(array $resource): never {
 
     $fileSize = filesize($realPath);
     $fileName = basename($realPath);
-    $mimeType = mime_content_type($realPath) ?: 'application/octet-stream';
+    if (function_exists('mime_content_type')) {
+        $mimeType = mime_content_type($realPath) ?: 'application/octet-stream';
+    } elseif (class_exists('finfo')) {
+        $fi = new finfo(FILEINFO_MIME_TYPE);
+        $mimeType = $fi->file($realPath) ?: 'application/octet-stream';
+    } else {
+        $ext = strtolower(pathinfo($realPath, PATHINFO_EXTENSION));
+        $mimeMap = getAllowedMimeTypes();
+        $mimeType = $mimeMap[$ext][0] ?? 'application/octet-stream';
+    }
 
     // Increment download count only on non-Range or full-file requests (fixes multi-thread inflation)
     $isRange = isset($_SERVER['HTTP_RANGE']);
