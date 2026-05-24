@@ -195,7 +195,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php foreach ($resources as $res): ?>
 <tr>
 <td><?= $res['id'] ?></td>
-<td><a href="../detail.php?id=<?= $res['id'] ?>" title="<?= h($res['title']) ?>"><?= h(mb_strlen($res['title']) > 30 ? mb_substr($res['title'], 0, 30) . '...' : $res['title']) ?></a></td>
+<td><a href="../detail.php?id=<?= $res['id'] ?>" title="<?= h($res['title']) ?>"><?= h(safeStrlen($res['title']) > 30 ? safeSubstr($res['title'], 0, 30) . '...' : $res['title']) ?></a></td>
 <td><?= $res['type'] === 'local' ? '本地' : '外链' ?></td>
 <td><?= $res['type'] === 'local' ? formatFileSize((int)$res['file_size']) : '—' ?></td>
 <td><?= $res['is_vip'] ? '&#128274;' : '—' ?></td>

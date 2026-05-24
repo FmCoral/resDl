@@ -736,3 +736,20 @@ function paginationLinks(int $page, int $totalPages, string $baseUrl): string {
 function h(string $str): string {
     return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
 }
+
+// --- Safe multi-byte string helpers (mbstring fallback) ---
+
+function safeStrlen(string $str): int {
+    if (function_exists('mb_strlen')) {
+        return mb_strlen($str, 'UTF-8');
+    }
+    return (int)preg_match_all('/./us', $str);
+}
+
+function safeSubstr(string $str, int $start, int $length): string {
+    if (function_exists('mb_substr')) {
+        return mb_substr($str, $start, $length, 'UTF-8');
+    }
+    preg_match_all('/./us', $str, $matches);
+    return implode('', array_slice($matches[0], $start, $length));
+}
