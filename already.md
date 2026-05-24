@@ -1,6 +1,6 @@
 # resDl 项目进度记录
 
-## 构建日期：2026-05-24（更新：域名支持 + 防盗链）
+## 构建日期：2026-05-24（更新：域名支持 + 防盗链 + Nginx 默认）
 
 ---
 
@@ -59,8 +59,9 @@
 ### 7. 安全与服务器配置
 | 文件 | 说明 |
 |------|------|
-| `.htaccess` | Apache 重写规则（禁止直接访问 uploads/ 和 inc/） |
-| `uploads/.htaccess` | 禁止 PHP 执行 + 禁用目录索引 |
+| `nginx.conf` | **Nginx 站点安全配置（推荐）** — uploads/ 和 inc/ 目录 deny 规则、PHP 执行禁止 |
+| `.htaccess` | Apache 安全规则（Apache 用户使用） — 等价于 nginx.conf 的 deny 规则 |
+| `uploads/.htaccess` | Apache 下禁止 PHP 执行 + 禁用目录索引 |
 | `uploads/index.html` | 空白占位页，防止目录列表 |
 
 ### 8. 文档
@@ -98,6 +99,7 @@
 | 20 | 默认分类 ID 硬编码为 1 | `getDefaultCategoryId()` 动态查询，存储于 settings 表 |
 | 21 | 站点基础 URL 缺失 | `SITE_URL` 常量（init.php 从 settings 读取）+ `site_url()` 辅助函数；所有链接使用绝对 URL |
 | 22 | 下载脚本 Host 头校验缺失 | `serveFileDownload()` 校验 `HTTP_HOST` + `HTTP_REFERER`，拒绝盗链 |
+| 23 | 默认使用 Nginx | 新增 `nginx.conf`（推荐）；文档 Nginx 优先；Apache `.htaccess` 保留备用 |
 
 ---
 
@@ -109,7 +111,14 @@
 4. **全站绝对链接** — 所有 CSS/JS 引用、下载链接、详情页链接均使用 `SITE_URL` 生成绝对路径
 5. **防盗链校验** — `serveFileDownload()` 检查 `HTTP_HOST` 和 `HTTP_REFERER`，仅允许本站域名
 6. **README.md** — 详细使用说明文档（安装部署、功能说明、Nginx 配置、常见问题）
-7. **ready.md** — 新增"站点 URL 配置"章节
+7. **ready.md** — 新增"站点 URL 配置"章节；Web 服务器默认 Nginx
+
+### v1.2 更新内容（Nginx 默认）
+
+8. **nginx.conf** — 新增 Nginx 站点安全配置（uploads/ inc/ deny + PHP 禁止执行）
+9. **README.md** — 安装流程增加 Nginx 安全配置步骤；Apache 降为备选方案
+10. **ready.md** — 服务器改为 Nginx 优先
+11. **issues.md** — #23 标记已修复
 
 ---
 

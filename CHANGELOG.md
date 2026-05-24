@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## v1.2.0 — 2026-05-24
+
+### 新增
+- **nginx.conf**：Nginx 站点安全配置（推荐），包含 uploads/ 和 inc/ deny 规则、PHP 执行禁止
+
+### 变更
+- **默认 Web 服务器**：从 Apache 改为 Nginx（README.md、ready.md 文档更新）
+- **README.md**：安装流程新增 Nginx 安全配置步骤；Apache 降为备选方案
+- **already.md / issues.md**：#23 标记已修复
+
+### issues.md 修复
+- #23 修改默认使用 Nginx 而不是 Apache
+
+---
+
 ## v1.1.0 — 2026-05-24
 
 ### 新增

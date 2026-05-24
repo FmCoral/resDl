@@ -8,7 +8,7 @@
 |------|------|
 | PHP | 8.1+ |
 | MySQL | 5.7+ 或 MariaDB 10.2+ |
-| Web 服务器 | Apache（推荐）或 Nginx |
+| Web 服务器 | Nginx（推荐）或 Apache |
 | PHP 扩展 | PDO, mysqli, json, session, fileinfo |
 
 字符集统一使用 **utf8mb4**（utf8mb4_unicode_ci）。
@@ -24,8 +24,39 @@
 5. 步骤二：设置管理员账号密码
 6. 安装完成后，**立即删除 `install.php`**（安全要求）
 7. 设置 `uploads/` 目录权限为 **755**，所有者为 Web 服务器运行用户（如 `www`）
+8. 将 `nginx.conf` 中的安全规则添加到站点 Nginx 配置中（宝塔：网站→设置→配置文件）
 
-### 2. 手动安装
+### 2. Nginx 安全配置
+
+将 `nginx.conf` 的内容合并到站点 Nginx server 块中，核心规则：
+
+```nginx
+# 禁止直接访问 uploads 目录（必须通过 download.php 输出）
+location /uploads/ {
+    deny all;
+    return 403;
+}
+
+# 禁止访问 inc 目录（核心代码保护）
+location /inc/ {
+    deny all;
+    return 403;
+}
+
+# 禁止 uploads 目录执行 PHP
+location ~* /uploads/.*\.(php|phtml)$ {
+    deny all;
+    return 403;
+}
+```
+
+> 如果使用 **宝塔面板**，可在「网站→设置→配置文件」中直接粘贴上述规则。
+
+### 3. Apache 用户
+
+项目保留了 `.htaccess` 文件用于 Apache 环境。如果使用 Apache，确保启用 `mod_rewrite` 即可，无需额外配置。
+
+### 4. 手动安装
 
 如果无法使用 Web 安装向导：
 
@@ -57,23 +88,6 @@
    UPDATE settings SET setting_value = 'https://你的域名.com' WHERE setting_key = 'site_url';
    ```
 
-### 3. Nginx 配置
-
-如果使用 Nginx 代替 Apache，添加以下重写规则：
-
-```nginx
-# 禁止直接访问 uploads 目录
-location /uploads/ {
-    deny all;
-    return 403;
-}
-
-# 禁止访问 inc 目录
-location /inc/ {
-    deny all;
-    return 403;
-}
-```
 
 ## 首次使用
 
@@ -107,6 +121,8 @@ resDl/
 ├── cron_scan.php          # 定时扫描脚本（用于 cron）
 ├── install.php            # Web 安装向导（用完即删）
 ├── install.sql            # 数据库初始化脚本
+├── nginx.conf             # Nginx 站点配置（推荐）
+├── .htaccess              # Apache 安全规则（Apache 用户使用）
 │
 ├── inc/                   # 核心库
 │   ├── config.php         # 数据库/站点配置
@@ -128,7 +144,7 @@ resDl/
 │   └── js/main.js         # 前端脚本
 │
 └── uploads/               # 文件存储目录（需可写）
-    ├── .htaccess          # 禁止直接访问
+    ├── .htaccess          # Apache 安全规则（Apache 用户使用）
     └── index.html         # 占位页
 ```
 
@@ -177,7 +193,7 @@ resDl/
 - **路径遍历防护**：下载时验证文件路径在允许的扫描目录内
 - **文件上传校验**：扩展名白名单 + `finfo` MIME 类型检测
 - **文件名安全处理**：清除危险字符，防覆盖（前缀 `{user_id}_{timestamp}_`）
-- **上传目录保护**：`.htaccess` 禁止 PHP 执行和目录索引
+- **上传目录保护**：Nginx `deny all` / Apache `.htaccess` 禁止 PHP 执行和目录索引
 
 ## 站点 URL 配置
 
@@ -223,7 +239,7 @@ A: 请检查资源是否选择了该分类。系统支持递归查询子分类�
 - **后端**：PHP 8.1（PDO + 原生函数，零第三方依赖）
 - **数据库**：MySQL 5.7+ / MariaDB 10.2+（utf8mb4）
 - **前端**：HTML5 + CSS3（原生，响应式，无框架）
-- **服务器**：Apache（支持 .htaccess）或 Nginx
+- **服务器**：Nginx（推荐）或 Apache
 
 ## 许可
 
