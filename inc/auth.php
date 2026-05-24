@@ -61,7 +61,7 @@ function is_admin(): bool {
     return check_login() && ($_SESSION['user_role'] ?? '') === 'admin';
 }
 
-function get_current_user(): array|false {
+function get_session_user(): array|false {
     if (!check_login()) return false;
     $db = getDB();
     $stmt = $db->prepare('SELECT * FROM users WHERE id = ?');

@@ -5,7 +5,7 @@
 require_once __DIR__ . '/inc/init.php';
 require_login();
 
-$user    = get_current_user();
+$user    = get_session_user();
 $error   = '';
 $success = '';
 
